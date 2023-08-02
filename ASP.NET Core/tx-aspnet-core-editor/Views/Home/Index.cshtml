@@ -2,25 +2,46 @@
 @using TXTextControl.Web.MVC
     
 @{
-    var sDocument = "<html><body><p>Welcome to <strong>Text Control</strong></p></body></html>";
+    var sDocument = @"<html><body><p>Hello</p>
+                    <p>Select all the text in the [ ]  including the brackets</p>
+                    <p>This is [Start select this is text after </p> </body></html>";
 }
 
 @Html.TXTextControl().TextControl(settings => {
     settings.UserNames = new string[] { "Tim Typer" };
 }).LoadText(sDocument, TXTextControl.Web.StringStreamType.HTMLFormat).Render()
 
-<input type="button" onclick="insertTable()" value="Insert Table" />
-
 <script>
-    function insertTable() {
-        TXTextControl.tables.add(5, 5, 10, function(e) {
-          if (e === true) { // if added
-            TXTextControl.tables.getItem(function(table) {
-              table.cells.forEach(function(cell) {
-                cell.setText("Cell text");
-              });
-            }, null, 10);
-          }
-        })
-    }
+    document.addEventListener("DOMContentLoaded", function () {
+        // Your code here
+        console.log("Page loaded!");
+
+        TXTextControl.addEventListener("textControlLoaded", () => {
+            TXTextControl.setInputPositionByTextPosition(81, 0, () =>{
+            TXTextControl.formFields.addTextFormField(200, (f) => {
+                f.setText("Select END] DONTSELECTTHIS", () =>{
+                });
+            })
+            TXTextControl.addEventListener("ribbonTabsLoaded", (x) => {
+                    TXTextControl.selection.setStart(68, () => {
+                        TXTextControl.selection.setLength(24, () => {
+                            TXTextControl.focus();
+                            console.clear();
+                        });
+                    });
+                    TXTextControl.addEventListener("formFieldTextChanged", (x) => {
+                        alert(`Field Change Event value is:${x.formField.text}`);
+                        console.log(`Field Change Event value is:${x.formField.text}`)
+                    });
+                    TXTextControl.addEventListener("changed", (x) => {
+                        console.log('document Changed Event');
+                    })
+                });
+                
+            });
+        });
+
+        // Call any functions or perform actions you need after page load
+    });
+
 </script>
